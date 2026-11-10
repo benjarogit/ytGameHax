@@ -112,8 +112,8 @@ sudo sh -c 'echo 0 > /proc/sys/kernel/yama/ptrace_scope'
 **Schnellweg mit Skript**
 
 ```bash
-git clone https://github.com/benjarogit/My-Mini-Mart---Hack.git
-cd My-Mini-Mart---Hack
+git clone https://github.com/benjarogit/ytGameHax.git
+cd ytGameHax
 chmod +x linux/*.sh
 
 ./linux/find_game_process.sh        # zeigt PID + Heap-Basis
