@@ -21,6 +21,7 @@ a server.
 | --- | --- | --- |
 | **My Mini Mart** | money | [games/my-mini-mart.md](games/my-mini-mart.md) |
 | **Pizza Inc.** | money | [games/pizza-inc.md](games/pizza-inc.md) |
+| **Claw Master** | coins, yellow & red stars | [games/claw-master.md](games/claw-master.md) |
 
 Each game page has a screenshot of the result, the addresses that were found
 and the specifics of that game.
@@ -178,8 +179,10 @@ Details: [`macos/README.md`](macos/README.md)
 ```
 games/my-mini-mart.md        game page incl. screenshot and values
 games/pizza-inc.md           game page incl. screenshot and values
+games/claw-master.md         game page incl. screenshot and values
 linux/find_game_process.sh   auto-detect process + WASM heap
 linux/money_hunt.sh          two-scan hunt incl. set/freeze
+linux/claw_master_set.py     set coins + both star counts in Claw Master
 windows/README.md            Cheat Engine guide (DE/EN)
 macos/README.md              Bit Slicer guide (DE/EN)
 docs/img/                    game screenshots

@@ -21,6 +21,7 @@ nicht auf einem Server.
 | --- | --- | --- |
 | **My Mini Mart** | Geld | [games/my-mini-mart.md](games/my-mini-mart.md) |
 | **Pizza Inc.** | Geld | [games/pizza-inc.md](games/pizza-inc.md) |
+| **Claw Master** | Münzen, gelbe & rote Sterne | [games/claw-master.md](games/claw-master.md) |
 
 Jede Spielseite enthält einen Screenshot des Ergebnisses, die gefundenen
 Adressen und die Besonderheiten des jeweiligen Spiels.
@@ -180,8 +181,10 @@ Details: [`macos/README.md`](macos/README.md)
 ```
 games/my-mini-mart.md        Spielseite inkl. Screenshot und Werten
 games/pizza-inc.md           Spielseite inkl. Screenshot und Werten
+games/claw-master.md         Spielseite inkl. Screenshot und Werten
 linux/find_game_process.sh   Prozess + WASM-Heap automatisch finden
 linux/money_hunt.sh          Zwei-Scan-Hunt inkl. Setzen/Freeze
+linux/claw_master_set.py     Münzen + beide Sterne in Claw Master setzen
 windows/README.md            Cheat-Engine-Anleitung (DE/EN)
 macos/README.md              Bit-Slicer-Anleitung (DE/EN)
 docs/img/                    Screenshots der Spiele
