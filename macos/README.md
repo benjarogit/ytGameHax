@@ -1,116 +1,200 @@
 # macOS – Bit Slicer
 
-[← Alle Spiele / all games](../README.md)
+**Geld, Münzen und Sterne mit ein paar Klicks ändern** · ⏱ ca. 5 Minuten
 
-**Deutsch** · [English](#english)
+[← Alle Spiele](../README.md) · **Deutsch** · [English](#english)
 
-*Gilt für alle Spiele in diesem Repo (Beispielwerte: Pizza Inc.). /
-Applies to all games in this repo (example values: Pizza Inc.).*
+Gilt für **alle Spiele** in diesem Repo. Beispielwerte: Pizza Inc. (`750`), die
+richtigen Zahlen stehen auf der jeweiligen Spielseite.
 
 ---
 
 ## Deutsch
 
-### 1. Vorbereiten
+### Was du brauchst
 
-1. Spiel öffnen: <https://www.youtube.com/playables/Ugkxto-OwJZo4rm8Xl2Nj3K403nHlYThf-sr>
-2. Geldstand oben rechts notieren (z. B. `750`).
-3. [Bit Slicer](https://github.com/zorgiepoo/Bit-Slicer) herunterladen
-   (kostenlos, Open Source) und nach `/Applications` verschieben.
-4. Beim ersten Start ggf. in **Systemeinstellungen → Datenschutz & Sicherheit**
-   die Freigabe erteilen (Bedienungshilfen / „App erlauben").
+- macOS 11 oder neuer
+- Firefox mit dem geöffneten Spiel
+- [Bit Slicer](https://github.com/zorgiepoo/Bit-Slicer/releases) (kostenlos,
+  Open Source)
 
-> Bit Slicer muss in andere Prozesse schreiben dürfen. Bei systemnahen
-> Prozessen kann ein Start mit `sudo open -a "Bit Slicer"` nötig sein.
+### Schritt 1 – Bit Slicer installieren
 
-### 2. Den richtigen Prozess finden
+1. Auf <https://github.com/zorgiepoo/Bit-Slicer/releases> die neueste
+   `.zip`-Datei herunterladen.
+2. Entpacken und **Bit Slicer.app** nach `/Programme` verschieben.
+3. Beim ersten Start: Rechtsklick → **Öffnen** (die App ist nicht signiert).
+   Falls macOS blockt: **Systemeinstellungen → Datenschutz & Sicherheit** →
+   „Dennoch öffnen".
+4. Erlauben, dass Bit Slicer andere Apps steuern darf
+   (Bedienungshilfen / „App erlauben").
 
-Firefox hat mehrere Prozesse; das Spiel läuft in einem **Content Process** mit
-großem WASM-Heap.
+### Schritt 2 – Spiel öffnen und Wert ablesen
 
-1. **Aktivitätsanzeige** öffnen → Reiter „Speicher" → nach `firefox` filtern.
-2. Den Firefox-Prozess mit dem **größten Speicherverbrauch** heraussuchen
-   (das Spiel belegt mehrere hundert MB).
-3. In Bit Slicer: **Target** wählen → diesen Firefox-Prozess auswählen.
+1. Spiel auf YouTube öffnen (Link auf der Spielseite).
+2. Warten, bis der Spielstand sichtbar ist.
+3. Die Zahl notieren, die du ändern willst – z. B. `750` Geld oder `80` Münzen.
 
-### 3. Suchen
+### Schritt 3 – Den richtigen Firefox-Prozess finden
 
-1. **Search → Value Type:** `4-Byte Integer` (Signed).
-2. Wert `750` eingeben → **Search**.
-3. Im Spiel kaufen/verkaufen, sodass sich das Geld ändert (z. B. `650`).
-4. Neuen Wert eingeben → **Search** (filtert die bisherigen Treffer).
-5. Es sollte **ein** Treffer übrig bleiben.
+Firefox läuft **mehrfach**. Das Spiel steckt in einem eigenen Prozess.
 
-Falls nicht: Wert erneut ändern und wieder filtern. Wenn `4 Byte` nichts
-findet, mit **8-Byte Integer** wiederholen.
+1. **Aktivitätsanzeige** öffnen (`Cmd+Leertaste` → „Aktivitätsanzeige").
+2. Reiter **Speicher** → oben rechts nach `firefox` filtern.
+3. Der Eintrag mit **mehreren hundert MB** ist der Spiel-Prozess.
+4. In Bit Slicer oben links: **Target** anklicken → diesen Prozess auswählen.
 
-> Wichtig: erst filtern, bis nur eine Adresse übrig ist – nicht hunderte
-> Treffer gleichzeitig beschreiben.
+> 💡 **Unsicher?** Andere Tabs schließen. Der Spiel-Prozess ist dann der
+> einzige mit großem Speicherverbrauch.
 
-### 4. Wert setzen / sperren
+### Schritt 4 – Suchen
 
-1. Treffer markieren → **Edit** / Wert ändern (z. B. `999999999`).
-2. Für dauerhaftes Halten **Lock** aktivieren.
+1. **Value Type:** `4-Byte Integer` (signed).
+2. Aktuellen Wert eintragen (`750`) → **Search**. Tausende Treffer – normal.
+3. Im Spiel **kaufen oder verkaufen**, sodass sich die Zahl ändert (z. B.
+   `650`).
+4. Neuen Wert eintragen → **Search** (filtert die bisherigen Treffer).
+5. Noch einmal im Spiel ändern und erneut **Search**. Meist bleibt **ein**
+   Treffer übrig.
 
-Das Spiel zieht laufend Ausgaben ab – ohne Lock sinkt der Wert wieder.
+### Schritt 5 – Wert setzen und sperren
 
-> **Obergrenze:** `2.147.483.647` (32-Bit).
+1. Treffer markieren → **Edit** → neuen Wert eintragen (`999999999`).
+2. Für Geld-Spiele **Lock** aktivieren – das Spiel zieht sonst laufend
+   Ausgaben ab.
+3. Im Spiel eine Transaktion auslösen (kaufen/verkaufen), damit die Anzeige
+   aktualisiert.
 
-### 5. Nach einem Reload
+> ⚠️ **Niemals hunderte Treffer gleichzeitig beschreiben.** Erst filtern, bis
+> nur wenige Adressen übrig sind.
 
-Nach Seiten-Reload oder Browser-Neustart ändert sich die Adresse. Schritte 2–4
-einfach wiederholen.
+### Wenn's nicht klappt
+
+| Problem | Lösung |
+| :--- | :--- |
+| Bit Slicer startet nicht / wird blockiert | Rechtsklick → **Öffnen**, oder in **Datenschutz & Sicherheit** freigeben. |
+| Kein Treffer beim ersten Scan | Wert nochmal genau ablesen (ganze Zahl, keine Punkte/Kommas). |
+| Nach dem zweiten Scan noch hunderte Treffer | Wert hat sich mehrfach geändert. Noch eine Runde: ändern → **Search**. |
+| „4 Byte" findet nichts | **8-Byte Integer** wählen und von vorn beginnen. |
+| Wert springt zurück | **Lock** aktivieren oder mehrfach neu setzen. |
+| Anzeige bleibt alt | Echte Transaktion im Spiel auslösen. |
+| Alles nach Reload weg | Adresse ändert sich. Schritte 3–5 wiederholen (~1 Minute). |
+| Kein Schreibzugriff auf den Prozess | Bit Slicer mit `sudo open -a "Bit Slicer"` starten (nur wenn nötig). |
+
+<details>
+<summary><b>Spiele mit mehreren Kopien (Pizza Inc., Claw Master)</b></summary>
+
+Manche Spiele speichern denselben Wert an mehreren Stellen. Dann bleiben beim
+Filtern **mehrere gleiche Adressen** übrig – z. B. vier bei Pizza Inc.
+
+- **Pizza Inc.:** alle vier Treffer markieren, denselben Wert eintragen und
+  **Lock** für alle aktivieren.
+- **Claw Master:** Münzen suchen. Gelbe Sterne liegen `+0x18` (24 Bytes)
+  dahinter, rote Sterne `+0x30` (48 Bytes). In Bit Slicer die Adresse
+  duplizieren und den Wert der Adresse um `18` bzw. `30` erhöhen.
+
+</details>
+
+<details>
+<summary><b>Warum funktioniert das?</b></summary>
+
+Das Spiel ist WebAssembly (Unity) und hält seinen Spielstand im
+Browser-Speicher. Ein einzelner Scan findet tausende Zahlen – Preise, Zähler,
+Grafikwerte. Erst die **Änderung** ist der Filter: Nur die echte Geld-Zahl
+ändert sich genau so wie die Anzeige.
+
+</details>
 
 ---
 
 ## English
 
-### 1. Prepare
+### What you need
 
-1. Open the game: <https://www.youtube.com/playables/Ugkxto-OwJZo4rm8Xl2Nj3K403nHlYThf-sr>
-2. Note the money in the top right (e.g. `750`).
-3. Download [Bit Slicer](https://github.com/zorgiepoo/Bit-Slicer) (free, open
-   source) and move it to `/Applications`.
-4. On first launch, grant permission in **System Settings → Privacy & Security**
-   (Accessibility / "allow app") if prompted.
+- macOS 11 or newer
+- Firefox with the game open
+- [Bit Slicer](https://github.com/zorgiepoo/Bit-Slicer/releases) (free, open
+  source)
 
-> Bit Slicer needs to write into other processes. For hardened processes you may
-> need to start it with `sudo open -a "Bit Slicer"`.
+### Step 1 – Install Bit Slicer
 
-### 2. Find the right process
+1. Open <https://github.com/zorgiepoo/Bit-Slicer/releases> and download the
+   latest `.zip`.
+2. Unzip it and move **Bit Slicer.app** to `/Applications`.
+3. On first launch: right-click → **Open** (the app is not signed). If macOS
+   blocks it: **System Settings → Privacy & Security** → "Open Anyway".
+4. Allow Bit Slicer to control other apps (Accessibility / "allow app").
 
-Firefox has several processes; the game runs in a **content process** with a
-large WASM heap.
+### Step 2 – Open the game and read the value
 
-1. Open **Activity Monitor** → "Memory" tab → filter for `firefox`.
-2. Pick the Firefox process with the **highest memory usage** (the game uses
-   several hundred MB).
-3. In Bit Slicer: choose **Target** → that Firefox process.
+1. Open the game on YouTube (link on the game page).
+2. Wait until the HUD is visible.
+3. Note the number you want to change – e.g. `750` money or `80` coins.
 
-### 3. Search
+### Step 3 – Find the right Firefox process
 
-1. **Search → Value Type:** `4-Byte Integer` (signed).
-2. Enter `750` → **Search**.
-3. Buy/sell in game so the money changes (e.g. `650`).
+Firefox runs **multiple** processes. The game lives in its own one.
+
+1. Open **Activity Monitor** (`Cmd+Space` → "Activity Monitor").
+2. **Memory** tab → filter for `firefox` in the top right.
+3. The entry with **several hundred MB** is the game process.
+4. In Bit Slicer click **Target** at the top left → select that process.
+
+> 💡 **Not sure?** Close other tabs. The game process is then the only one with
+> a big memory footprint.
+
+### Step 4 – Search
+
+1. **Value Type:** `4-Byte Integer` (signed).
+2. Enter the current value (`750`) → **Search**. Thousands of hits – expected.
+3. **Buy or sell** something in game so the number changes (e.g. `650`).
 4. Enter the new value → **Search** (filters the previous hits).
-5. **One** hit should remain.
+5. Change it once more in game and **Search** again. Usually **one** hit
+   remains.
 
-If not: change the value again and filter again. If `4 Byte` finds nothing,
-retry with **8-Byte Integer**.
+### Step 5 – Set and lock
 
-> Important: filter down to a single address first – never write to hundreds of
-> hits at once.
+1. Select the hit → **Edit** → enter the new value (`999999999`).
+2. For money games enable **Lock** – otherwise the game keeps deducting
+   expenses.
+3. Trigger a transaction in game (buy/sell) so the display updates.
 
-### 4. Set / lock
+> ⚠️ **Never write to hundreds of hits at once.** Filter down to a few addresses
+> first.
 
-1. Select the hit → **Edit** / change the value (e.g. `999999999`).
-2. Enable **Lock** to keep it.
+### If it doesn't work
 
-The game constantly deducts expenses – without lock the value drops again.
+| Problem | Fix |
+| :--- | :--- |
+| Bit Slicer won't start / is blocked | Right-click → **Open**, or allow it in **Privacy & Security**. |
+| No hit on the first scan | Read the value again carefully (whole number, no dots or commas). |
+| Still hundreds of hits after the second scan | The value changed several times. Do another round: change → **Search**. |
+| "4 Byte" finds nothing | Choose **8-Byte Integer** and start over. |
+| The value drops back | Enable **Lock** or set it repeatedly. |
+| Display stays old | Trigger a real transaction in game. |
+| Everything gone after a reload | The address changes. Repeat steps 3–5 (~1 minute). |
+| No write access to the process | Start Bit Slicer with `sudo open -a "Bit Slicer"` (only if needed). |
 
-> **Limit:** `2,147,483,647` (32-bit).
+<details>
+<summary><b>Games with several copies (Pizza Inc., Claw Master)</b></summary>
 
-### 5. After a reload
+Some games store the same value in several places, so filtering leaves
+**several identical addresses** – four in Pizza Inc., for example.
 
-After a page reload or browser restart the address changes. Just repeat steps
-2–4.
+- **Pizza Inc.:** select all four hits, enter the same value and enable **Lock**
+  for each.
+- **Claw Master:** search the coins. Yellow stars sit `+0x18` (24 bytes) behind
+  them, red stars `+0x30` (48 bytes). In Bit Slicer duplicate the address and
+  increase it by `18` or `30`.
+
+</details>
+
+<details>
+<summary><b>Why does this work?</b></summary>
+
+The game is WebAssembly (Unity) and keeps its state in browser memory. A single
+scan finds thousands of numbers – prices, counters, graphics data. The
+**change** is the filter: only the real money value changes exactly like the
+display does.
+
+</details>

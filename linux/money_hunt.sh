@@ -16,14 +16,20 @@
 #   ./money_hunt.sh
 #   ./money_hunt.sh --old 383 --new 463
 #   ./money_hunt.sh --old 383 --new 463 --set 999999999 --freeze 2
+#   ./money_hunt.sh --old 750 --new 650 --set 999999999 --freeze 2 --all
 #   ./money_hunt.sh --pid 12386 --old 383 --new 463 --set 1000000000
+#
+# --all schreibt alle uebrigen Kopien (max. 8) gleichzeitig - fuer Spiele wie
+#       Pizza Inc., die den Geldwert mehrfach speichern.
+# --all writes all remaining copies (max. 8) at once - for games like Pizza
+#       Inc. that keep the money value in several places.
 #
 set -uo pipefail
 
-OLD=""; NEW=""; PID=""; TARGET=""; FREEZE=""; ALLREG=0
+OLD=""; NEW=""; PID=""; TARGET=""; FREEZE=""; ALLREG=0; ALL=0; MAX_WRITE=8
 
 usage() {
-    sed -n '2,30p' "$0" | sed 's/^# \{0,1\}//'
+    awk 'NR>1 && /^#/ {sub(/^# ?/, ""); print; next} NR>1 {exit}' "$0"
     exit "${1:-0}"
 }
 
@@ -34,6 +40,7 @@ while [[ $# -gt 0 ]]; do
         --pid)          PID="$2"; shift 2 ;;
         --set)          TARGET="$2"; shift 2 ;;
         --freeze)       FREEZE="$2"; shift 2 ;;
+        --all)          ALL=1; shift ;;
         --all-regions)  ALLREG=1; shift ;;
         -h|--help)      usage 0 ;;
         *) echo "Unbekannte Option / unknown option: $1" >&2; usage 1 ;;
@@ -182,36 +189,50 @@ for a in "${addrs[@]}"; do
 done
 
 if [[ ${#addrs[@]} -ne 1 ]]; then
-    cat <<'EOF'
+    if [[ "$ALL" -eq 1 && ${#addrs[@]} -le $MAX_WRITE ]]; then
+        echo
+        echo "${#addrs[@]} Kopien gefunden - alle werden gleichzeitig gesetzt."
+        echo "${#addrs[@]} copies found - setting all of them at once."
+    else
+        cat <<'EOF'
 
 Es sind noch mehrere Kandidaten. Noch eine Runde:
   - Geld erneut aendern
   - Skript mit dem letzten Wert als --old und dem neuen als --new starten
+  - oder mit --all die uebrigen Kopien (max. 8) gemeinsam setzen
 
 Several candidates left. Do another round:
   - change money again
   - rerun with the last value as --old and the new one as --new
+  - or use --all to write the remaining copies (max. 8) together
 EOF
-    cleanup
-    exit 0
+        cleanup
+        exit 0
+    fi
 fi
 
-addr=${addrs[0]}
-echo
-echo "Geld-Adresse / money address: 0x$addr"
+if [[ ${#addrs[@]} -eq 1 ]]; then
+    echo
+    echo "Geld-Adresse / money address: 0x${addrs[0]}"
+else
+    echo
+    printf 'Geld-Adressen / money addresses: %d Kopien/copies\n' "${#addrs[@]}"
+fi
+
+idx=$(seq -s, 0 $((${#addrs[@]} - 1)))
 
 if [[ -n "$TARGET" ]]; then
     if [[ -n "$FREEZE" ]]; then
-        send "set 0=$TARGET/$FREEZE"
+        send "set $idx=$TARGET/$FREEZE"
         sleep 1
-        echo "Gesetzt / set: 0x$addr = $TARGET, alle ${FREEZE}s neu (freeze)."
+        echo "Gesetzt / set: $TARGET auf alle ${#addrs[@]} Treffer, alle ${FREEZE}s neu (freeze)."
         echo "scanmem PID: $SM_PID"
         echo "Stop: kill $SM_PID"
         exit 0   # Session absichtlich weiterlaufen lassen / keep session alive
     else
-        send "set 0=$TARGET"
+        send "set $idx=$TARGET"
         sleep 1
-        echo "Gesetzt / set: 0x$addr = $TARGET"
+        echo "Gesetzt / set: $TARGET auf alle ${#addrs[@]} Treffer."
     fi
 fi
 

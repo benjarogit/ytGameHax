@@ -1,213 +1,210 @@
-# YouTube Playables – Memory Hacks
+# ytGameHax
 
-[Deutsch](README.md) · **English**
+**Change money, coins and stars in YouTube Playables games – no experience needed.**
 
-Notes and tools for finding and changing values like **money** in YouTube
-Playables games via process memory:
+[Deutsch](README.md) · [English](README.en.md)
 
-- **Linux** → [scanmem](https://github.com/scanmem/scanmem)
-- **Windows** → [Cheat Engine](https://www.cheatengine.org/)
-- **macOS** → [Bit Slicer](https://github.com/zorgiepoo/Bit-Slicer)
+![Platforms](https://img.shields.io/badge/platforms-Linux%20%7C%20Windows%20%7C%20macOS-3b82f6?style=flat-square)
+![Games](https://img.shields.io/badge/games-3-22c55e?style=flat-square)
+![License](https://img.shields.io/badge/license-MIT-6b7280?style=flat-square)
 
-All games run as WebAssembly (Unity) in the browser. The values live in the
-WASM heap of a **Firefox content process** – not in the main process and not on
-a server.
+> **The whole idea in one sentence**
+> The game stores your money as a number in memory. We find that number, change
+> it in game, and then write a bigger number to the same spot.
 
----
-
-## Games
-
-| Game | What | Guide |
-| --- | --- | --- |
-| **My Mini Mart** | money | [games/my-mini-mart.md](games/my-mini-mart.md) |
-| **Pizza Inc.** | money | [games/pizza-inc.md](games/pizza-inc.md) |
-| **Claw Master** | coins, yellow & red stars | [games/claw-master.md](games/claw-master.md) |
-
-Each game page has a screenshot of the result, the addresses that were found
-and the specifics of that game.
+No mod, nothing installed into the game, nothing is sent to YouTube.
+It takes one to two minutes per game.
 
 ---
 
-## Why this works
+## 1. Pick a game
 
-### 1. The browser is not the process you are looking for
+| Game | What you can change | Time | Guide |
+| :--- | :--- | :---: | :--- |
+| **Claw Master** | coins, yellow & red stars | ~1 min | **[Guide →](games/claw-master.md)** |
+| **Pizza Inc.** | money | ~2 min | **[Guide →](games/pizza-inc.md)** |
+| **My Mini Mart** | money | ~2 min | **[Guide →](games/my-mini-mart.md)** |
 
-Firefox puts every website into its own **content process**. The game keeps its
-whole state in a large `[anon:wasm-reserved]` block.
+Every game page contains: a clickable screenshot of the result, step-by-step
+instructions, the values that were found, and troubleshooting.
 
-Visible in `ps` as:
+---
+
+## 2. The principle – the same in every game
+
+1. **Search** – scan for the current value (e.g. `750`).
+2. **Change** – buy or sell in game (e.g. `650`).
+3. **Replace** – scan for the new value. The right address is what's left –
+   write a big number into it.
+
+> 💡 **Why this works:** a single scan finds thousands of numbers (prices,
+> counters, graphics data). The **change** is the filter: only the real money
+> value changed exactly like the display did.
+
+---
+
+## 3. Your operating system
+
+| System | Tool | How |
+| :--- | :--- | :--- |
+| **Linux** | [scanmem](https://github.com/scanmem/scanmem) + scripts | one terminal command |
+| **Windows** | [Cheat Engine](https://www.cheatengine.org/) | [click guide](windows/README.md) |
+| **macOS** | [Bit Slicer](https://github.com/zorgiepoo/Bit-Slicer) | [click guide](macos/README.md) |
+
+### Linux – the shortest path
+
+**Prepare once** (terminal):
+
+```bash
+# install scanmem
+sudo pacman -S scanmem        # Arch / CachyOS / Manjaro
+sudo apt install scanmem      # Debian / Ubuntu / Mint
+
+# let scanmem look into other programs (valid until reboot)
+sudo sh -c 'echo 0 > /proc/sys/kernel/yama/ptrace_scope'
+```
+
+**Get the repo and make the scripts executable:**
+
+```bash
+git clone https://github.com/benjarogit/ytGameHax.git
+cd ytGameHax
+chmod +x linux/*.sh linux/*.py
+```
+
+**Open the game in your browser, then:**
+
+```bash
+# Claw Master: sets coins + both star counts, no further input needed
+sudo python3 linux/claw_master_set.py --easy
+
+# money games (Pizza Inc., My Mini Mart): asks for the values
+sudo ./linux/money_hunt.sh --set 999999999 --freeze 2          # one address
+sudo ./linux/money_hunt.sh --set 999999999 --freeze 2 --all    # all copies
+```
+
+Afterwards **keep playing for a moment** in game (e.g. defeat an enemy) so the
+display picks up the new values.
+
+<details>
+<summary><b>What exactly does the script do?</b></summary>
+
+`claw_master_set.py` searches the memory of the correct browser process for the
+record that holds coins and stars together, then rewrites every copy of that
+record. You don't have to read or type any values.
+
+`money_hunt.sh` asks for the current and the new value, scans, filters, and
+finally writes the target value. Without arguments it runs in a guided mode;
+with arguments it is faster:
+
+```bash
+sudo ./linux/money_hunt.sh --old 750 --new 650 --set 999999999 --freeze 2
+sudo ./linux/money_hunt.sh --old 750 --new 650 --set 999999999 --freeze 2 --all
+```
+
+`--all` writes all remaining copies (at most 8) at once – needed for Pizza Inc.,
+which keeps the money value in four places.
+
+</details>
+
+### Windows and macOS
+
+There, a program with a window does the work. The click guide is the same for
+all games – only the numbers you type come from the game page:
+
+- **[Windows → Cheat Engine](windows/README.md)**
+- **[macOS → Bit Slicer](macos/README.md)**
+
+---
+
+## 4. If something doesn't work
+
+| Problem | Fix |
+| :--- | :--- |
+| "No process found" | The game tab must be open and fully loaded. Reload it and run the script again. |
+| `scanmem: command not found` | Install scanmem (see above). |
+| The value drops back | For money games use the **freeze** – the game keeps deducting expenses. |
+| Display stays old | Trigger an in-game event (buy, sell, defeat an enemy). Some games only redraw then. |
+| Everything is gone after a reload | Normal: the address changes. Repeat the guide once (~1 minute). |
+| `ptrace_scope` error on Linux | Run `sudo sh -c 'echo 0 > /proc/sys/kernel/yama/ptrace_scope'` or start the script with `sudo`. |
+
+---
+
+## 5. Limits & notes
+
+- **Addresses are not permanent.** After a reload or browser restart the tab
+  gets new memory – repeat the procedure.
+- **32-bit limit:** maximum `2,147,483,647`. Above that the value overflows.
+  `999999999` is safe; in Claw Master use `99999` coins (the display has only
+  five digits).
+- **Never write to hundreds of hits at once.** Filter down to a few addresses
+  first – a mass write has crashed a tab before.
+- **Client-side only:** nothing is sent to YouTube, other players are not
+  affected.
+- **Cheat Engine is Windows only.** On Linux, scanmem does the same job natively.
+
+---
+
+<details>
+<summary><b>How it works: why the WASM heap is special</b></summary>
+
+The games run as WebAssembly (Unity) in the browser. Firefox keeps the whole
+game state in one big memory block called `[anon:wasm-reserved]` – and in a
+separate **content process**, not in the main process:
 
 ```
 /usr/lib/firefox/firefox -contentproc -isForBrowser … -parentPid 7080 …
 ```
 
-### 2. Why scanmem does not see the heap at first
-
-By default scanmem only scans `heap`, `stack`, `exe` and `bss`. The WASM heap
-has a **name** (`[anon:wasm-reserved]`) and is therefore skipped. So first:
+By default scanmem only searches `heap`, `stack`, `exe` and `bss`. The WASM
+block has a name and is therefore skipped. So first:
 
 ```
 option region_scan_level 3
 reset
-lregions
+lregions          # note the ID of the wasm-reserved line (e.g. 42)
 ```
 
-Look for the line containing `[anon:wasm-reserved]` – you need the region ID in
-front of it (e.g. `43`).
-
-### 3. Scan only inside the WASM heap
+Then search only in that block:
 
 ```
 option scan_data_type number
-dregion !43
+dregion !42       # delete all regions except 42
 ```
 
-- `region_scan_level 3` → scan named/anonymous regions too
-- `dregion !43` → delete all regions **except** 43 (`!` inverts the set)
-- `scan_data_type number` → covers `i16/i32/i64/f32` at once
-
-### 4. The real trick: use the change as a filter
-
-A single scan often returns thousands of hits (prices, counters, textures …).
-The filter is the **change**:
-
-1. Scan for the current value (e.g. `750`)
-2. Buy/sell in game so the value changes (e.g. `650`)
-3. Scan for the new value → only a few candidates remain
-4. One more change → usually exactly one address
-
-### 5. Filter first, write later
-
-> **Important:** never write to hundreds of candidates at once. A mass write
-> test crashed a tab once. Filter down to a few addresses first – then write.
+`scan_data_type number` covers `i16`, `i32`, `i64` and `f32` at once.
+After two value changes usually exactly one address remains:
 
 ```
 set 0=999999999      # set once
 set 0=999999999/2    # re-set every 2 seconds (freeze)
 ```
 
----
+Stop the freeze: `kill <scanmem PID>`.
 
-## Usage
+</details>
 
-### Linux (scanmem)
+<details>
+<summary><b>Glossary</b></summary>
 
-**Install**
+| Term | Meaning |
+| :--- | :--- |
+| **Process** | A running program. Firefox starts one per tab. |
+| **Memory / heap** | The area where the game keeps its numbers. |
+| **Scan** | Searching memory for a specific number. |
+| **Address** | The exact spot in memory where a number lives. |
+| **Freeze** | Re-writing a value continuously so the game can't overwrite it. |
+| **int32** | 32-bit integer – the usual number type in these games. |
 
-```bash
-# Arch / CachyOS / Manjaro
-sudo pacman -S scanmem
-
-# Debian / Ubuntu / Mint
-sudo apt install scanmem
-```
-
-**Allow ptrace** (once, until reboot):
-
-```bash
-sudo sh -c 'echo 0 > /proc/sys/kernel/yama/ptrace_scope'
-```
-
-**Quick start with the script**
-
-```bash
-git clone https://github.com/benjarogit/ytGameHax.git
-cd ytGameHax
-chmod +x linux/*.sh
-
-./linux/find_game_process.sh        # PID + heap base
-./linux/money_hunt.sh --old 750 --new 650 --set 999999999 --freeze 2
-```
-
-The script scans the old value, waits while you buy/sell in game, you enter the
-new value – then it sets the target value and keeps it frozen. Run without
-arguments for an interactive flow.
-
-**Manual**
-
-```bash
-scanmem <PID>
-```
-
-Then inside the scanmem console:
-
-```
-option region_scan_level 3
-reset
-lregions                      # note the wasm-reserved region ID
-option scan_data_type number
-dregion !<ID>
-750                           # current value
-```
-
-Change the value in game, then:
-
-```
-650                           # new value
-list                          # show candidates
-set 0=999999999/2             # set + freeze
-```
-
-Stop the freeze: `kill <scanmem-pid>`.
-
-### Windows (Cheat Engine)
-
-Details: [`windows/README.md`](windows/README.md)
-
-1. Open the game, note the value (e.g. `750`).
-2. Task Manager → Details → pick the **`firefox.exe` with the highest memory
-   usage** (the content process of the tab).
-3. Cheat Engine → "Open Process" → that process.
-4. Value Type **4 Bytes**, First Scan: `750`.
-5. Buy/sell in game (e.g. `650`) → **Next Scan**: `650`.
-6. One address remains → double-click → change value, tick the freeze box.
-
-### macOS (Bit Slicer)
-
-Details: [`macos/README.md`](macos/README.md)
-
-1. Open the game, note the value.
-2. Bit Slicer → Target: the Firefox process with the big WASM heap.
-3. Search: **4-byte integer**, `750` → Search.
-4. Change the value in game (e.g. `650`) → Search.
-5. Edit the remaining address or enable "Lock".
-
----
-
-## Files
-
-```
-games/my-mini-mart.md        game page incl. screenshot and values
-games/pizza-inc.md           game page incl. screenshot and values
-games/claw-master.md         game page incl. screenshot and values
-linux/find_game_process.sh   auto-detect process + WASM heap
-linux/money_hunt.sh          two-scan hunt incl. set/freeze
-linux/claw_master_set.py     set coins + both star counts in Claw Master
-windows/README.md            Cheat Engine guide (DE/EN)
-macos/README.md              Bit Slicer guide (DE/EN)
-docs/img/                    game screenshots
-```
-
----
-
-## Limits & notes
-
-- **The address is not permanent:** after a reload the tab gets a new process
-  and usually a new heap offset. Repeat the procedure.
-- **int32 limit:** values above `2,147,483,647` overflow. `999999999` is safe.
-- **Freeze writes periodically:** intended, because the game constantly deducts
-  expenses. Stop it with `kill`.
-- **Client-side only:** nothing is sent to YouTube servers.
-- **No Cheat Engine on Linux:** Cheat Engine is Windows software; scanmem does
-  the same job natively.
+</details>
 
 ---
 
 ## Disclaimer
 
-Reverse-engineering learning project for free single-player browser games.
-No servers are manipulated and no other players are affected. Using it may
-violate YouTube's terms of service – use at your own risk, no warranty.
+Reverse-engineering learning project for free single-player browser games. No
+servers are manipulated and no other players are affected. Using it may violate
+YouTube's terms of service – use at your own risk, no warranty.
 
 ## License
 

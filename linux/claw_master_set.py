@@ -17,6 +17,7 @@ It picks the record with the highest coin count (= the active save) and writes
 the new values into every copy that shares its star counts.
 
 Usage:
+    sudo python3 claw_master_set.py --easy
     sudo python3 claw_master_set.py --show
     sudo python3 claw_master_set.py --new-coins 99999 --new-yellow 8888 --new-red 7777
     sudo python3 claw_master_set.py --new-coins 99999 --dry-run
@@ -96,11 +97,18 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--pid", type=int)
     ap.add_argument("--show", action="store_true", help="list records and exit")
+    ap.add_argument("--easy", action="store_true",
+                    help="no arguments needed: coins 99999, yellow 8888, red 7777")
     ap.add_argument("--new-coins", type=int)
     ap.add_argument("--new-yellow", type=int)
     ap.add_argument("--new-red", type=int)
     ap.add_argument("--dry-run", action="store_true")
     args = ap.parse_args()
+
+    if args.easy:
+        args.new_coins = 99999
+        args.new_yellow = 8888
+        args.new_red = 7777
 
     pid, base, size = find_heap(args.pid)
     print(f"process {pid}, heap {base:#x} ({size / 1048576:.1f} MB)")
