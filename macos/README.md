@@ -1,6 +1,11 @@
 # macOS – Bit Slicer
 
+[← Alle Spiele / all games](../README.md)
+
 **Deutsch** · [English](#english)
+
+*Gilt für alle Spiele in diesem Repo (Beispielwerte: Pizza Inc.). /
+Applies to all games in this repo (example values: Pizza Inc.).*
 
 ---
 
@@ -9,7 +14,7 @@
 ### 1. Vorbereiten
 
 1. Spiel öffnen: <https://www.youtube.com/playables/Ugkxto-OwJZo4rm8Xl2Nj3K403nHlYThf-sr>
-2. Geldstand oben rechts notieren (z. B. `383`).
+2. Geldstand oben rechts notieren (z. B. `750`).
 3. [Bit Slicer](https://github.com/zorgiepoo/Bit-Slicer) herunterladen
    (kostenlos, Open Source) und nach `/Applications` verschieben.
 4. Beim ersten Start ggf. in **Systemeinstellungen → Datenschutz & Sicherheit**
@@ -31,8 +36,8 @@ großem WASM-Heap.
 ### 3. Suchen
 
 1. **Search → Value Type:** `4-Byte Integer` (Signed).
-2. Wert `383` eingeben → **Search**.
-3. Im Spiel kaufen/verkaufen, sodass sich das Geld ändert (z. B. `463`).
+2. Wert `750` eingeben → **Search**.
+3. Im Spiel kaufen/verkaufen, sodass sich das Geld ändert (z. B. `650`).
 4. Neuen Wert eingeben → **Search** (filtert die bisherigen Treffer).
 5. Es sollte **ein** Treffer übrig bleiben.
 
@@ -63,7 +68,7 @@ einfach wiederholen.
 ### 1. Prepare
 
 1. Open the game: <https://www.youtube.com/playables/Ugkxto-OwJZo4rm8Xl2Nj3K403nHlYThf-sr>
-2. Note the money in the top right (e.g. `383`).
+2. Note the money in the top right (e.g. `750`).
 3. Download [Bit Slicer](https://github.com/zorgiepoo/Bit-Slicer) (free, open
    source) and move it to `/Applications`.
 4. On first launch, grant permission in **System Settings → Privacy & Security**
@@ -85,8 +90,8 @@ large WASM heap.
 ### 3. Search
 
 1. **Search → Value Type:** `4-Byte Integer` (signed).
-2. Enter `383` → **Search**.
-3. Buy/sell in game so the money changes (e.g. `463`).
+2. Enter `750` → **Search**.
+3. Buy/sell in game so the money changes (e.g. `650`).
 4. Enter the new value → **Search** (filters the previous hits).
 5. **One** hit should remain.
 

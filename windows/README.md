@@ -1,6 +1,11 @@
 # Windows – Cheat Engine
 
+[← Alle Spiele / all games](../README.md)
+
 **Deutsch** · [English](#english)
+
+*Gilt für alle Spiele in diesem Repo (Beispielwerte: Pizza Inc.). /
+Applies to all games in this repo (example values: Pizza Inc.).*
 
 ---
 
@@ -9,7 +14,7 @@
 ### 1. Vorbereiten
 
 1. Spiel öffnen: <https://www.youtube.com/playables/Ugkxto-OwJZo4rm8Xl2Nj3K403nHlYThf-sr>
-2. Geldstand oben rechts notieren (z. B. `383`).
+2. Geldstand oben rechts notieren (z. B. `750`).
 3. [Cheat Engine](https://www.cheatengine.org/) installieren (bei der
    Installation die mitgelieferten Zusatzprogramme abwählen).
 
@@ -30,9 +35,9 @@ Firefox hat **mehrere** `firefox.exe`-Prozesse. Das Spiel läuft in einem
 ### 3. Scannen
 
 1. **Value Type:** `4 Bytes`
-2. **First Scan** mit dem aktuellen Wert, z. B. `383`.
+2. **First Scan** mit dem aktuellen Wert, z. B. `750`.
 3. Im Spiel etwas kaufen oder verkaufen, sodass sich das Geld ändert
-   (z. B. auf `463`).
+   (z. B. auf `650`).
 4. Neuen Wert eintragen → **Next Scan**.
 5. Es sollte **genau eine** Adresse übrig bleiben.
 
@@ -66,7 +71,7 @@ die Schritte 2–4 wiederholen (dauert ca. eine Minute).
 ### 1. Prepare
 
 1. Open the game: <https://www.youtube.com/playables/Ugkxto-OwJZo4rm8Xl2Nj3K403nHlYThf-sr>
-2. Note the money in the top right (e.g. `383`).
+2. Note the money in the top right (e.g. `750`).
 3. Install [Cheat Engine](https://www.cheatengine.org/) (opt out of the bundled
    offers during setup).
 
@@ -83,8 +88,8 @@ process**, not the main process.
 ### 3. Scan
 
 1. **Value Type:** `4 Bytes`
-2. **First Scan** with the current value, e.g. `383`.
-3. Buy or sell something in game so the money changes (e.g. to `463`).
+2. **First Scan** with the current value, e.g. `750`.
+3. Buy or sell something in game so the money changes (e.g. to `650`).
 4. Enter the new value → **Next Scan**.
 5. Exactly **one** address should remain.
 
